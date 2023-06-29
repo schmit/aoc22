@@ -1,3 +1,4 @@
+use std::fs;
 use std::error::Error;
 use std::str::FromStr;
 
@@ -6,13 +7,14 @@ mod day1;
 #[derive(Debug)]
 pub enum Part {
     A,
-    B
+    B,
 }
 
 #[derive(Debug)]
 pub struct Config {
     pub day: i32,
-    pub part: Part
+    pub part: Part,
+    pub input_path: String,
 }
 
 impl Config {
@@ -42,18 +44,23 @@ impl Config {
             _ => return Err("Invalid part argument"),
         };
 
+        let input_path = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Missing input_path argument")
+        };
+
         // Check if there are any extra arguments
         if args.next().is_some() {
             return Err("Extra arguments provided");
-        }
+        };
 
-        Ok(Config { day, part })
+        Ok(Config { day, part, input_path })
     }
 }
 
-pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
+pub fn run(config: Config, contents: &str) -> Result<(), Box<dyn Error>> {
     let result = match (config.day, &config.part) {
-        (1, Part::A) => day1::day1_part_a(),
+        (1, Part::A) => day1::day1_part_a(contents),
 
         _ => -1,
     };
