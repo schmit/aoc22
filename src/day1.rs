@@ -16,6 +16,7 @@ pub fn day1_part_a(contents: &str) -> i32 {
 }
 
 fn contents_to_calories(contents: &str) -> Vec<i32> {
+    // return the total calories for each elf
     let mut iter = contents.lines();
 
     let mut result = Vec::<i32>::new();
@@ -37,15 +38,19 @@ fn contents_to_calories(contents: &str) -> Vec<i32> {
 }
 
 pub fn day1_part_b(contents: &str) -> i32 {
-    let k = 3;
-    let calories = contents_to_calories(contents);
+    // find the 3 elves with the most calories
+    let topk_calories = contents_to_calories(contents)
+        .iter()
+        .fold(TopK::new(3), |mut acc, x| {
+            acc.push(*x);
+            acc
+        });
 
-    let topk_calories = calories.iter().fold(TopK::new(k), |mut acc, x| {
-        acc.push(*x);
-        acc
-    });
-
-    topk_calories.values().iter().sum()
+    // sum their total values
+    topk_calories
+        .values()
+        .iter()
+        .sum()
 }
 
 #[cfg(test)]
