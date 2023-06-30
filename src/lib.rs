@@ -1,7 +1,7 @@
-use std::fs;
 use std::error::Error;
 use std::str::FromStr;
 
+mod topk;
 mod day1;
 
 #[derive(Debug)]
@@ -61,6 +61,7 @@ impl Config {
 pub fn run(config: Config, contents: &str) -> Result<(), Box<dyn Error>> {
     let result = match (config.day, &config.part) {
         (1, Part::A) => day1::day1_part_a(contents),
+        (1, Part::B) => day1::day1_part_b(contents),
 
         _ => -1,
     };
