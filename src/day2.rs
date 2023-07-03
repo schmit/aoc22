@@ -1,6 +1,5 @@
 
-#[derive(PartialEq)]
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 enum Hand {
     Rock,
     Paper,
@@ -22,33 +21,61 @@ struct Round {
 }
 
 pub fn day2_part_a(contents: &str) -> i32 {
-    parse_input(contents)
+    parse_input(contents, parse_a)
         .map(|round| score_round(round))
         .sum()
 }
 
-fn parse_input(contents: &str) -> impl Iterator<Item = Round> + '_ {
+pub fn day2_part_b(contents: &str) -> i32 {
+    parse_input(contents, parse_b)
+
+        .map(|round| score_round(round))
+        .sum()
+}
+
+fn parse_input(contents: &str, parse_line: fn(&str) -> Round) -> impl Iterator<Item = Round> + '_ {
     contents
         .lines()
-        .map(
-        |line| {
-            let mut chars = line.chars();
-            let opponent = match chars.next() {
-                Some('A') => Hand::Rock,
-                Some('B') => Hand::Paper,
-                Some('C') => Hand::Scissors,
-                _ => panic!("Invalid opponent hand")
-            };
-            let _ = chars.next();
-            let mine = match chars.next() {
-                Some('X') => Hand::Rock,
-                Some('Y') => Hand::Paper,
-                Some('Z') => Hand::Scissors,
-                _ => panic!("Invalid my hand")
-            };
-            Round { mine, opponent }
-        }
-        )
+        .map(parse_line)
+}
+
+fn parse_a(line: &str) -> Round {
+    let mut chars = line.chars();
+    let opponent = match chars.next() {
+        Some('A') => Hand::Rock,
+        Some('B') => Hand::Paper,
+        Some('C') => Hand::Scissors,
+        _ => panic!("Invalid opponent hand")
+    };
+    let _ = chars.next();
+    let mine = match chars.next() {
+        Some('X') => Hand::Rock,
+        Some('Y') => Hand::Paper,
+        Some('Z') => Hand::Scissors,
+        _ => panic!("Invalid my hand")
+    };
+    Round { mine, opponent }
+}
+
+fn parse_b(line: &str) -> Round {
+    let mut chars = line.chars();
+    let opponent = match chars.next() {
+        Some('A') => Hand::Rock,
+        Some('B') => Hand::Paper,
+        Some('C') => Hand::Scissors,
+        _ => panic!("Invalid opponent hand")
+    };
+    let _ = chars.next();
+    let result = match chars.next() {
+        Some('X') => Result::Loss,
+        Some('Y') => Result::Draw,
+        Some('Z') => Result::Win,
+        _ => panic!("Invalid my hand")
+    };
+
+    let mine = hand_for_result(opponent, result);
+    Round { mine, opponent }
+
 }
 
 fn rps_is_win(round: Round) -> Result {
@@ -60,6 +87,19 @@ fn rps_is_win(round: Round) -> Result {
         Round { opponent: Hand::Paper, mine: Hand::Rock } => Result::Loss,
         Round { opponent: Hand::Scissors, mine: Hand::Paper } => Result::Loss,
         _ => Result::Draw
+    }
+}
+
+fn hand_for_result(hand: Hand, result: Result) -> Hand {
+    // return hand that would achieve result based in input hand
+    match (hand.clone(), result) {
+        (Hand::Rock, Result::Win) => Hand::Paper,
+        (Hand::Rock, Result::Loss) => Hand::Scissors,
+        (Hand::Paper, Result::Win) => Hand::Scissors,
+        (Hand::Paper, Result::Loss) => Hand::Rock,
+        (Hand::Scissors, Result::Win) => Hand::Rock,
+        (Hand::Scissors, Result::Loss) => Hand::Paper,
+        _ => hand
     }
 }
 
@@ -101,12 +141,21 @@ C Z";
     }
 
     #[test]
+    fn test_day2_part_b() {
+        let contents = "\
+A Y
+B X
+C Z";
+        assert_eq!(day2_part_b(contents), 12);
+    }
+
+    #[test]
     fn test_parse_input() {
         let contents = "\
 A Y
 B X
 C Z";
-        let result: Vec<Round> = parse_input(contents).collect();
+        let result: Vec<Round> = parse_input(contents, parse_a).collect();
         assert_eq!(result.len(), 3);
         assert_eq!(result[0].opponent, Hand::Rock);
         assert_eq!(result[0].mine, Hand::Paper);

@@ -64,6 +64,7 @@ pub fn run(config: Config, contents: &str) -> Result<(), Box<dyn Error>> {
         (1, Part::A) => day1::day1_part_a(contents),
         (1, Part::B) => day1::day1_part_b(contents),
         (2, Part::A) => day2::day2_part_a(contents),
+        (2, Part::B) => day2::day2_part_b(contents),
 
         _ => -1,
     };
