@@ -27,7 +27,7 @@ pub fn day2_part_a(contents: &str) -> i32 {
         .sum()
 }
 
-fn parse_input<'a>(contents: &'a str) -> impl Iterator<Item = Round> + 'a {
+fn parse_input(contents: &str) -> impl Iterator<Item = Round> + '_ {
     contents
         .lines()
         .map(
