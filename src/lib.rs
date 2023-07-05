@@ -4,6 +4,7 @@ use std::str::FromStr;
 mod topk;
 mod day1;
 mod day2;
+mod day3;
 
 #[derive(Debug)]
 pub enum Part {
@@ -65,6 +66,7 @@ pub fn run(config: Config, contents: &str) -> Result<(), Box<dyn Error>> {
         (1, Part::B) => day1::day1_part_b(contents),
         (2, Part::A) => day2::day2_part_a(contents),
         (2, Part::B) => day2::day2_part_b(contents),
+        (3, Part::A) => day3::day3_part_a(contents),
 
         _ => -1,
     };
